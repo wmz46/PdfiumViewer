@@ -187,19 +187,30 @@ namespace PdfiumViewer
             left += (width - scaledWidth) / 2;
             top += (height - scaledHeight) / 2;
 
-            _document.Render(
-                page,
-                e.Graphics,
-                e.Graphics.DpiX,
-                e.Graphics.DpiY,
-                new Rectangle(
-                    AdjustDpi(e.Graphics.DpiX, left),
-                    AdjustDpi(e.Graphics.DpiY, top),
-                    AdjustDpi(e.Graphics.DpiX, scaledWidth),
-                    AdjustDpi(e.Graphics.DpiY, scaledHeight)
-                ),
-                PdfRenderFlags.ForPrinting | PdfRenderFlags.Annotations
-            );
+            //改成用图片方式加载，否则无法显示电子签章
+            var image = _document.Render(page, AdjustDpi(e.Graphics.DpiY, scaledWidth), AdjustDpi(e.Graphics.DpiY, scaledHeight), e.Graphics.DpiX,
+                e.Graphics.DpiY, PdfRenderFlags.Annotations);
+            var rectangle = new Rectangle((int)left,
+                (int)top,
+                (int)scaledWidth,
+                (int)scaledHeight);
+            e.Graphics.DrawImage(image, rectangle);
+            image.Dispose();
+
+            //注释原代码
+            //_document.Render(
+            //    page,
+            //    e.Graphics,
+            //    e.Graphics.DpiX,
+            //    e.Graphics.DpiY,
+            //    new Rectangle(
+            //        AdjustDpi(e.Graphics.DpiX, left),
+            //        AdjustDpi(e.Graphics.DpiY, top),
+            //        AdjustDpi(e.Graphics.DpiX, scaledWidth),
+            //        AdjustDpi(e.Graphics.DpiY, scaledHeight)
+            //    ),
+            //    PdfRenderFlags.ForPrinting | PdfRenderFlags.Annotations
+            //);
         }
 
         private static void Swap(ref double a, ref double b)
