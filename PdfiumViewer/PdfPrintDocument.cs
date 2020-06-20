@@ -186,10 +186,17 @@ namespace PdfiumViewer
 
             left += (width - scaledWidth) / 2;
             top += (height - scaledHeight) / 2;
-
+            //最大分辨率改为300*300
+            float dpiX = 300;
+            float dpiY = 300;
+            if (e.Graphics.DpiX < 300 || e.Graphics.DpiY < 300)
+            {
+                dpiX = e.Graphics.DpiX;
+                dpiY = e.Graphics.DpiY;
+            }
             //改成用图片方式加载，否则无法显示电子签章
-            var image = _document.Render(page, AdjustDpi(e.Graphics.DpiY, scaledWidth), AdjustDpi(e.Graphics.DpiY, scaledHeight), e.Graphics.DpiX,
-                e.Graphics.DpiY, PdfRenderFlags.Annotations);
+            var image = _document.Render(page, AdjustDpi(dpiY, scaledWidth), AdjustDpi(dpiY, scaledHeight), dpiX,
+                dpiY, PdfRenderFlags.Annotations);
             var rectangle = new Rectangle((int)left,
                 (int)top,
                 (int)scaledWidth,
